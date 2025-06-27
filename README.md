@@ -1,84 +1,141 @@
-# computer_vision_food
-# Food-101 Food Recognition and Calorie Estimation Demo
 
-This project provides a comprehensive solution for food image recognition and calorie estimation using a fine-tuned ResNet-50 model on the Food-101 dataset, presented via an interactive Gradio web interface.
+# 🍽️ computer_vision_food
 
-## 🌟 Features
+A comprehensive food image recognition and calorie estimation system powered by a fine-tuned **ResNet-50** model on the **Food-101** dataset. It also supports **multi-image food intake tracking** and **GPT-based dietary feedback**.
 
-* **Food Image Recognition**: Identifies 101 different food categories from images.
-* **Calorie Estimation**: Provides an estimated calorie count for the recognized food item based on a lookup table.
-* **Pre-trained Model**: Leverages the powerful ResNet-50 architecture with pre-trained ImageNet weights for efficient learning.
-* **Data Augmentation**: Employs robust data augmentation techniques during training to improve model generalization.
-* **Checkpointing**: Supports saving and loading model training checkpoints for seamless resumption.
-* **Gradio Web Interface**: An easy-to-use drag-and-drop web interface for real-time predictions.
+This project combines computer vision with nutritional intelligence, offering an end-to-end solution from training to inference and suggestion generation.
+
+---
+
+## 📦 Overview
+
+- **ResNet-50 model** fine-tuned on Food-101 dataset
+- **Gradio web UI** for real-time food prediction & calorie estimation
+- **GPT-4 powered dietary summary** for multiple meals
+- Modular Jupyter Notebooks for training and deployment
+- Model weights managed via **Git LFS**
+- Compatible with Google Colab (optional)
+
+---
+
+## 📁 File Descriptions
+
+| File / Folder | Description |
+|---------------|-------------|
+| `food_train_code.ipynb` | ✅ Main training notebook for ResNet-50 on Food-101. Includes data loading, augmentation, training loop, validation, checkpoint saving. |
+| `multi_food_intake_gpt_suggeste.ipynb` | 🍱 Upload multiple food images and get GPT-generated suggestions based on predicted food types and calorie intake. |
+| `calorie_lookup_table.xlsx` | 📊 A calorie reference table for 101 food classes. Used for mapping class predictions to estimated calories. |
+| `computer_vision_06242024.ipynb` | (Optional) Initial project setup notebook via Google Colab, not required for usage. |
+| `models/` | 📁 Folder containing the best model weights (`food101_resnet50.pth`). Uses Git LFS for versioning. |
+| `.gitattributes` | Configuration for Git LFS to track large model files. |
+| `README.md` | 📖 Project documentation (this file). |
+
+---
 
 ## 🚀 Getting Started
 
-This project is designed to be run primarily in a Google Colab environment due to its reliance on GPU acceleration and direct integration with Google Drive.
+### 🔧 Requirements
 
-### Prerequisites
+- Python 3.8+
+- PyTorch
+- torchvision
+- pandas
+- Gradio
+- openai (if using GPT suggestions)
 
-* Google Account (for Colab and Google Drive)
-* Basic understanding of Python and Deep Learning concepts.
+```bash
+pip install torch torchvision pandas gradio openai
+```
 
-### Setup and Running the Notebook
+---
 
-1.  **Open in Google Colab**:
-    * Upload the provided `.ipynb` file to your Google Drive, or open it directly in Colab.
-    * Ensure your Colab runtime is set to **GPU** (Runtime -> Change runtime type -> Hardware accelerator -> GPU).
+## 🧠 Model Training
 
-2.  **Run All Cells**:
-    * Execute all cells in the Colab notebook sequentially (Runtime -> Run all).
+To train the model from scratch or resume training:
 
-    The notebook will perform the following steps:
-    * **Mount Google Drive**: Connects to your Google Drive to store/load models and data.
-    * **Download & Extract Food-101 Dataset**: Downloads the ~5GB Food-101 dataset and extracts it to `/content/food-101` (Colab's fast local storage).
-    * **Load Calorie Table**: Attempts to load `calorie_lookup_table.xlsx` from your Google Drive. If not found or if there's an error, it will generate a random one and save it as `food101_random_calorie_table.csv`.
-    * **Data Preparation**: Splits the Food-101 dataset into 80% training, 10% validation, and 10% test sets, applying appropriate transformations.
-    * **Model Initialization & Training**: Initializes a ResNet-50 model, potentially loads a pre-trained checkpoint, and starts/resumes training for a specified number of epochs. The best model based on validation accuracy is saved to `food101_resnet50.pth` in your Google Drive.
-    * **Final Test Set Evaluation**: Evaluates the best-saved model on the unseen test set to report final performance metrics.
-    * **Launch Gradio UI**: Starts the interactive web demo.
+1. **Open** `food_train_code.ipynb`
+2. The notebook will:
+   - Load and preprocess Food-101 dataset
+   - Split into training, validation, and test sets
+   - Apply augmentation and normalization
+   - Initialize ResNet-50 (ImageNet pre-trained)
+   - Train and validate the model for each epoch
+   - Save best model as `food101_resnet50.pth`
 
-3.  **Access the Gradio Demo**:
-    * After the last cell finishes executing, a public URL (e.g., `https://xxxxxx.gradio.live`) will be printed in the Colab output.
-    * Click this link to open the Gradio web interface in your browser.
+> 💡 You can skip training and use the provided pretrained model in `models/` folder.
 
-## 📸 Using the Gradio Demo
+---
 
-1.  **Upload Image**:
-    * In the Gradio interface, click the "Upload Food Image" area.
-    * You can drag and drop an image file, or click to browse and select an image from your local computer.
-    * **(Note)** The current Gradio UI in this code uses `gr.File(type="filepath")` which means you'll select a file from your disk. If you previously had "webcam" input, that functionality has been removed in the provided code.
-2.  **Submit for Prediction**:
-    * Once the image is uploaded, click the "Submit" button.
-3.  **View Results**:
-    * The interface will display the predicted food class, confidence level (percentage), and an estimated calorie count.
+## 🤖 Gradio + GPT-Based Prediction
 
-## 📂 Project Structure (on Google Drive)
+To run inference and generate dietary feedback:
 
-Upon running the notebook, the `food101_project` folder in your Google Drive (`/content/drive/MyDrive/food101_project`) will contain:
+1. **Open** `multi_food_intake_gpt_suggeste.ipynb`
+2. Upload multiple food images (breakfast, lunch, dinner, etc.)
+3. The notebook will:
+   - Load the saved `food101_resnet50.pth`
+   - Predict food class and match calorie from table
+   - Summarize total calorie intake
+   - Use **OpenAI GPT-4** to generate a personalized summary (e.g., "You ate high-carb meals today. Consider more vegetables tomorrow.")
+4. Requires OpenAI API key (insert in code cell)
 
-* `food-101.tar.gz`: The downloaded compressed Food-101 dataset.
-* `calorie_lookup_table.xlsx` (Optional): If you provide this file, it will be used for calorie lookups.
-* `food101_random_calorie_table.csv`: A randomly generated calorie table if the Excel file is not found.
-* `food101_resnet50.pth`: The best-performing trained model checkpoint.
-* `food101_resnet50_epoch_X_acc_YY.YY_loss_ZZ.ZZ.pth`: Snapshots of the model after each epoch of training.
+> 🔐 GPT usage is optional but recommended for intelligent summaries.
+
+---
 
 ## 🧪 Model Details
 
-* **Architecture**: ResNet-50
-* **Pre-training**: ImageNet weights (`models.ResNet50_Weights.DEFAULT`)
-* **Loss Function**: Cross-Entropy Loss
-* **Optimizer**: Adam
-* **Learning Rate Scheduler**: `ReduceLROnPlateau` to dynamically adjust learning rate based on validation loss.
+- **Architecture**: ResNet-50
+- **Pretrained**: Yes (ImageNet weights)
+- **Loss Function**: CrossEntropyLoss
+- **Optimizer**: Adam
+- **Learning Rate Scheduler**: ReduceLROnPlateau
+- **Accuracy**: Achieves ~78–80% Top-1 accuracy on Food-101 validation set
 
-## License
+---
 
-This project is open-source and available under the [MIT License](LICENSE).
-(Note: You might need to create a LICENSE file in your GitHub repo if you want to explicitly state the license.)
+## 🎯 Use Cases
+
+- Nutrition tracking app demo
+- Smart calorie calculator based on image input
+- GPT-integrated food journaling system
+- AI-powered diet monitoring and coaching
+
+---
+
+## 📂 Folder Structure
+
+```
+computer_vision_food/
+│
+├── models/                      # Trained ResNet-50 model weights (.pth via LFS)
+├── calorie_lookup_table.xlsx   # Excel file with food-calorie mapping
+├── food_train_code.ipynb       # Training pipeline
+├── multi_food_intake_gpt_suggeste.ipynb  # Inference + GPT suggestions
+├── computer_vision_06242024.ipynb        # Initial Colab setup (optional)
+├── .gitattributes              # Git LFS configuration
+└── README.md                   # Project documentation
+```
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).  
+Feel free to use and adapt it for your own research, demo, or development purposes.
+
+---
 
 ## 🙏 Acknowledgements
 
-* **Food-101 Dataset**: Provided by ETH Zurich.
-* **PyTorch**: For the deep learning framework.
-* **Gradio**: For easily building the web demo.
+- [Food-101 Dataset](https://www.vision.ee.ethz.ch/datasets_extra/food-101/) by ETH Zurich  
+- [PyTorch](https://pytorch.org/) for training and inference  
+- [Gradio](https://gradio.app/) for UI  
+- [OpenAI](https://openai.com/) for GPT-based summaries
+
+---
+
+## 📬 Contact
+
+For questions or collaboration requests:  
+**Sophia Liu (Shu Yu Liu)** — [GitHub Profile](https://github.com/Sophia291188)
